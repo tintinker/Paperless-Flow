@@ -13,6 +13,8 @@
     <style>
       p{
         overflow-wrap:break-word;
+        outline-style: solid;
+        outline-color: green;
       }
     </style>
 
@@ -23,7 +25,7 @@
         <h1>Swift Flow</h1>
         <p>Tool for flowing during LD Rounds</p>
       </div>
-      <div class="row">
+      <div class="row" id="round-flow-headers">
         <div class="col-md-3">
           <h5>AC</h5>
         </div>
@@ -37,15 +39,15 @@
           <h5>NR</h5>
         </div>
       </div>
-      <div class="row" ng-repeat="c1AcArg in c1AcArgs">
+      <div class="row" id="round-flow-content" ng-repeat="acArg in acArgs">
         <div class="col-md-12">
-          <div id="c1AcArg{{$index+1}}">
+          <div id="acArg{{$index+1}}">
             <div class="row" >
-              <div class="col-md-3" id="c1AcArg{{$index+1}}text">
-                <p>{{$index+1}}) {{c1AcArg.ac}}</p>
+              <div class="col-md-3" id="acArg{{$index+1}}text">
+                <p>{{$index+1}}) {{acArg.ac}}</p>
               </div>
-              <div class="col-md-9" id="c1AcArg{{$index+1}}responses">
-                  <div class="row" ng-repeat="ncArg in c1AcArg.nc" id="acArg{{$parent.$index+1}}ncArg{{$index+1}}">
+              <div class="col-md-9" id="acArg{{$index+1}}responses">
+                  <div class="row" ng-repeat="ncArg in acArg.nc" id="acArg{{$parent.$index+1}}ncArg{{$index+1}}">
                     <div class="col-md-4">
                       <p>{{$index+1}}) {{ncArg.nc}}</p>
                     </div>
@@ -68,5 +70,69 @@
         </div>
       </div>
     </div>
+    <div class="container-fluid">
+      <form ng-submit="addAcArg(acTag)" class="form-inline">
+        <div class="form-group">
+
+          <label for="acArgTag">New AC Argument</label>
+          <input id="acArgTag" type="text" class="form-control" ng-model="acTag" placeholder="Argument Tag Line"></input>
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
+      <form ng-submit="addNcArg(ncTag, acArgRef)" class="form-inline">
+        <div class="form-group">
+
+          <label for="ncArgTag">New NC Argument</label>
+          <input id="ncArgTag" type="text" class="form-control" ng-model="ncTag" placeholder="Argument Tag Line"></input>
+
+          <label for="acArgRef">AC #</label>
+          <input id="acArgRef" type="number" class="form-control" ng-model="acArgRef" placeholder="#"></input>
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
+      <form ng-submit="addArArg(arTag, acArgRef1, ncArgRef1)" class="form-inline">
+        <div class="form-group">
+
+          <label for="arArgTag">New AR Argument</label>
+          <input id="arArgTag" type="text" class="form-control" ng-model="arTag" placeholder="Argument Tag Line"></input>
+
+          <label for="acArgRef1">AC #</label>
+          <input id="acArgRef1" type="number" class="form-control" ng-model="acArgRef1" placeholder="#"></input>
+
+          <label for="ncArgRef1">NC #</label>
+          <input id="ncArgRef1" type="number" class="form-control" ng-model="ncArgRef1" placeholder="#"></input>
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
+      <form ng-submit="addNrArg(nrTag, acArgRef2, ncArgRef2, arArgRef2)" class="form-inline">
+        <div class="form-group">
+
+          <label for="nrArgTag">New NR Argument</label>
+          <input id="nrArgTag" type="text" class="form-control" ng-model="nrTag" placeholder="Argument Tag Line"></input>
+
+          <label for="acArgRef2">AC #</label>
+          <input id="acArgRef2" type="number" class="form-control" ng-model="acArgRef2" placeholder="#"></input>
+
+          <label for="ncArgRef2">NC #</label>
+          <input id="ncArgRef2" type="number" class="form-control" ng-model="ncArgRef2" placeholder="#"></input>
+
+          <label for="arArgRef2">AR #</label>
+          <input id="arArgRef2" type="number" class="form-control" ng-model="arArgRef2" placeholder="#"></input>
+
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
   </body>
 </html>

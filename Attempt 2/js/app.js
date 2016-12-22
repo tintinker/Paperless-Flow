@@ -5,7 +5,7 @@ app.controller('MainCtrl', [
   '$scope',
   '$timeout',
   function($scope, $timeout){
-    $scope.c1AcArgs = [
+    $scope.acArgs = [
       {
         ac:"Apples",
         nc:[
@@ -69,22 +69,52 @@ app.controller('MainCtrl', [
         nc:[
           {
             nc:"Bananas are bad",
-            ar:[
-              {
-                ar:"Bananas are good",
-                nr:[
-                  {
-                    nr:"Bananas are not good",
-                    ar:[
-                      "Bananas are really good"
-                    ]
-                  }
-                ]
-              }
-            ]
           }
         ]
       },
     ];
+
+    $scope.addAcArg = function(tag) {
+      $scope.acArgs.push({ac:tag});
+    };
+
+    $scope.addNcArg = function(tag, acArgRef) {
+      if(!$scope.acArgs[acArgRef].nc)
+        $scope.acArgs[acArgRef].nc = [];
+      $scope.acArgs[acArgRef].nc.push({nc:tag});
+    };
+
+    $scope.addArArg = function(tag, acArgRef, ncArgRef) {
+      if(!$scope.acArgs[acArgRef].nc)
+        $scope.acArgs[acArgRef].nc = [{nc:"drop", ar:[]}];
+      else if(!$scope.acArgs[acArgRef].nc[ncArgRef].ar)
+        $scope.acArgs[acArgRef].nc[ncArgRef].ar = [];
+      $scope.acArgs[acArgRef].nc[ncArgRef].ar.push({ar:tag});
+    };
+
+    $scope.addNrArg = function(tag, acArgRef, ncArgRef, arArgRef) {
+      if(!$scope.acArgs[acArgRef].nc)
+        $scope.acArgs[acArgRef].nc = [
+          {
+            nc:"extend",
+            ar:[
+              {
+                ar:"drop",
+                nr:[]
+              }
+            ]
+          }
+        ];
+      else if(!$scope.acArgs[acArgRef].nc[ncArgRef].ar)
+        $scope.acArgs[acArgRef].nc[ncArgRef].ar = [
+          {
+            ar:"drop",
+            nr:[]
+          }
+        ];
+      else if(!$scope.acArgs[acArgRef].nc[ncArgRef].ar[arArgRef].nr)
+        $scope.acArgs[acArgRef].nc[ncArgRef].ar[arArgRef].nr = [];
+      $scope.acArgs[acArgRef].nc[ncArgRef].ar[arArgRef].nr.push({nr:tag});
+    };
   },
 ]);
