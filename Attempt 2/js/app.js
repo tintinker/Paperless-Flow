@@ -1,69 +1,90 @@
-var app = angular.module('swift-flow', ['tw.directives.clickOutside']);
+var app = angular.module('swift-flow', []);
 
-/*app.directive('alertOnLoad', function(){
-  return {
-    restrict: 'A',
-    link: function(scope, element, attributes) {
-        return scope.$watch(
-          $("#c4").focus(),
-          function(){
-            alert("hi");
-          }
-        );
-    }
-  };
-});*/
 
-angular.module('swift-flow').controller('MainCtrl', [
+app.controller('MainCtrl', [
   '$scope',
   '$timeout',
   function($scope, $timeout){
-    $scope.contentions = [
-      {tag: "Contention 1", subpoints: []}
+    $scope.c1AcArgs = [
+      {
+        ac:"Apples",
+        nc:[
+          {
+            nc:"Apples are bad",
+            ar:[
+              {
+                ar:"Apples are good",
+                nr:[
+                  {
+                    nr:"Apples are not good",
+                    ar:[
+                      "Apples are really good"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            nc:"Apples are bad again",
+            ar:[
+              {
+                ar:"Apples are good again",
+                nr:[
+                  {
+                    nr:"Apples are not good again",
+                    ar:[
+                      "Apples are really good again"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        ac:"Oranges",
+        nc:[
+          {
+            nc:"Oranges are bad",
+            ar:[
+              {
+                ar:"Oranges are good",
+                nr:[
+                  {
+                    nr:"Oranges are not good",
+                    ar:[
+                      "Oranges are really good"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        ac:"Bananas",
+        nc:[
+          {
+            nc:"Bananas are bad",
+            ar:[
+              {
+                ar:"Bananas are good",
+                nr:[
+                  {
+                    nr:"Bananas are not good",
+                    ar:[
+                      "Bananas are really good"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
     ];
-
-    $scope.addContention = function(index){
-      $scope.contentions[index].tag = $("#c"+(index)).val();
-      $scope.contentions.push({
-        tag: "Contention "+($scope.contentions.length+1),
-        subpoints: []
-      });
-    };
-
-    $scope.newSubpoint = function(event, c) {
-      if(event.keyCode == 187) {
-        $scope.contentions[c].subpoints.push("Subpoint "+($scope.contentions[c].subpoints.length+1));
-      }
-    };
-
-    $scope.newContention = function(event) {
-      if(event.keyCode == 189) {
-        $scope.contentions.push({
-          tag: "Contention "+($scope.contentions.length+1),
-          subpoints: []
-        });
-      }
-    };
-
-    $scope.addSubpoint = function(c,s){
-      $scope.contentions[c].subpoints[s] = $("#c"+c+"s"+s).val();
-      $scope.contentions[c].subpoints.push(
-      "subpoint "+($scope.contentions[c].subpoints.length+1)
-      );
-    };
-
-    $scope.focus = function(c) {
-      $timeout(function () {
-        $("#c"+c).focus();
-      }, 10);
-    };
-
-    $scope.focusS = function(c,s) {
-      $timeout(function () {
-        $("#c"+c+"s"+s).focus();
-      }, 10);
-    };
-
-
   },
 ]);
