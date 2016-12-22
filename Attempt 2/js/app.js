@@ -1,4 +1,4 @@
-var app = angular.module('swift-flow', []);
+var app = angular.module('swift-flow', ['monospaced.elastic','ngSanitize']);
 
 
 app.controller('MainCtrl', [
@@ -73,6 +73,50 @@ app.controller('MainCtrl', [
         ]
       },
     ];
+
+    $scope.selection = "ar"
+
+    $scope.processNcKeyUp = function(e, acIndex){
+      if(e.keyCode == 13) {
+        e.preventDefault();
+        if(e.shiftKey && acIndex+1 < $scope.acArgs.length) {
+          $scope.addNcArg("",acIndex+1);
+          $timeout(function () {
+            $("#acArg"+(acIndex+2)+"ncArg"+$scope.acArgs[acIndex+1].nc.length+" textarea").focus();
+          }, 10);
+        }
+        else {
+          $scope.addNcArg("",acIndex);
+          $timeout(function () {
+            $("#acArg"+(acIndex+1)+"ncArg"+$scope.acArgs[acIndex].nc.length+" textarea").focus();
+          }, 10);
+        }
+      }
+    };
+
+    $scope.processArKeyUp = function(e, acIndex, ncIndex){
+      if(e.keyCode == 13) {
+        e.preventDefault();
+        if(e.shiftKey && ncIndex+1 < $scope.acArgs[acIndex].nc.length) {
+          $scope.addArArg("",acIndex, ncIndex+1);
+          $timeout(function () {
+            $("#acArg"+(acIndex+1)+"ncArg"+(ncIndex+2)+"arArg"+$scope.acArgs[acIndex].nc[ncIndex+1].length+" textarea").focus();
+          }, 10);
+        }
+        else if(e.shiftKey && acIndex+1 < $scope.acArgs.length) {
+          $scope.addArArg("",acIndex+1, 0);
+          $timeout(function () {
+            $("#acArg"+(acIndex+2)+"ncArg"+(0+1)+"arArg"+$scope.acArgs[acIndex+1].nc[0].length+" textarea").focus();
+          }, 10);
+        }
+        else {
+          $scope.addArArg("",acIndex, ncIndex);
+          $timeout(function () {
+            $("#acArg"+(acIndex+1)+"ncArg"+(ncIndex+1)+"arArg"+$scope.acArgs[acIndex].nc[ncIndex].length+" textarea").focus();
+          }, 10);
+        }
+      }
+    };
 
     $scope.addAcArg = function(tag) {
       $scope.acArgs.push({ac:tag});

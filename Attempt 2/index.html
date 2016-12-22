@@ -7,6 +7,8 @@
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
+    <script src="js/node_modules/angular-elastic/elastic.js"></script>
+    <script src="js/angular-sanitize.js"></script>
 
     <script src="js/app.js"></script>
 
@@ -17,6 +19,7 @@
         outline-color: green;
       }
     </style>
+
 
   </head>
   <body ng-app="swift-flow" ng-controller="MainCtrl">
@@ -43,22 +46,44 @@
         <div class="col-md-12">
           <div id="acArg{{$index+1}}">
             <div class="row" >
-              <div class="col-md-3" id="acArg{{$index+1}}text">
-                <p>{{$index+1}}) {{acArg.ac}}</p>
+              <div class="col-md-3" id="acArg{{$index+1}}text" ng-switch on="selection">
+                <p ng-switch-default >{{acArg.ac}}</p>
+                <form ng-switch-when="ac" class="form-inline">
+                  <div class="form-group">
+                    <textarea rows="1" class="form-control msd-elastic" ng-model=acArg.ac></textarea>
+                  </div>
+                </form>
               </div>
               <div class="col-md-9" id="acArg{{$index+1}}responses">
                   <div class="row" ng-repeat="ncArg in acArg.nc" id="acArg{{$parent.$index+1}}ncArg{{$index+1}}">
-                    <div class="col-md-4">
-                      <p>{{$index+1}}) {{ncArg.nc}}</p>
+                    <div class="col-md-4" ng-switch on="selection">
+                      <p ng-switch-default >{{ncArg.nc}}</p>
+                      <form ng-switch-when="nc" class="form-inline">
+                        <div class="form-group">
+                          <textarea ng-keyup="processNcKeyUp($event, $parent.$parent.$index)" rows="1" class="form-control msd-elastic" ng-model=ncArg.nc></textarea>
+                        </div>
+                      </form>
                     </div>
                     <div class="col-md-8">
                         <div class="row" ng-repeat="arArg in ncArg.ar" id="acArg{{$parent.$parent.$index+1}}ncArg{{$parent.$index+1}}arArg{{$index+1}}">
-                          <div class="col-md-6">
-                            <p>{{$index+1}}) {{arArg.ar}}</p>
+                          <div class="col-md-6" ng-switch on="selection">
+                            <p ng-switch-default >{{arArg.ar}}</p>
+                            <form ng-switch-when="ar" class="form-inline">
+                              <div class="form-group">
+                                <textarea ng-keyup="processArKeyUp($event, $parent.$parent.$parent.$index, $parent.$parent.$index)" rows="1" class="form-control msd-elastic" ng-model=arArg.ar></textarea>
+                              </div>
+                            </form>
                           </div>
                           <div class="col-md-6" id="responses in NR">
                             <div class="row" ng-repeat="nrArg in arArg.nr" id="acArg{{$parent.$parent.$parent.$index+1}}ncArg{{$parent.$parent.$index+1}}arArg{{$parent.$index+1}}nrArg{{$index+1}}">
-                              <p>{{$index+1}}) {{nrArg.nr}}</p>
+                              <div ng-switch on="selection">
+                                <p ng-switch-default >{{nrArg.nr}}</p>
+                                <form ng-switch-when="nr" class="form-inline">
+                                  <div class="form-group">
+                                    <textarea rows="1" class="form-control msd-elastic" ng-model=nrArg.nr></textarea>
+                                  </div>
+                                </form>
+                              </div>
                             </div>
                           </div>
                         </div>
