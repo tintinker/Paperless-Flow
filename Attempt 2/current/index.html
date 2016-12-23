@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Swift Flow</title>
+    <title>Paperless Flowing</title>
     <meta name="viewport"  content="width=device-width, initial-scale=1">
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -17,18 +17,18 @@
 
   </head>
   <body ng-app="swift-flow" ng-controller="MainCtrl">
-    <div class="container-fluid">
+    <div id="header" class="container-fluid">
       <div class="page-header">
-        <h1>Swift Flow</h1>
+        <h1>Paperless Flow</h1>
         <p>Tool for flowing during LD Rounds</p>
       </div>
-      <p ng-bind-html="fillertext"></p>
-      <p ng-repeat="combo in combos track by $index">{{combo}}<br></p>
-      <p>{{combos[comboIndex]}}</p>
-      <button class="btn btn-success" ng-click="refresh()">Refresh</button>
-      <button class="btn btn-primary" ng-click="increment()">Increment</button>
-      <button class="btn btn-danger" ng-click="addArgBySelection(false)">Add Argument</button>
-
+    </div>
+    <div class="container-fluid">
+      <ul class="row nav nav-pills">
+        <li id="selectNONE"><button ng-click="select(-1)" class="btn btn-secondary"><a><span class="text-left glyphicon glyphicon-menu-hamburger"></span></a></button></li>
+        <button class="btn btn-danger" ng-click="trash = !trash"><span class="glyphicon glyphicon-trash"</span></button>
+        <a ng-click="dd()" id="todownload"><button class="btn btn-success"><span class="glyphicon glyphicon-save"></span></button></a><
+      </ul>
       <div class="row" id="round-flow-headers">
         <ul class="row nav nav-pills nav-justified">
           <li class="col-md-3 active" id="selectAC"><a ng-click="select(0)">AC</a></li>
@@ -37,44 +37,61 @@
           <li class="col-md-3" id="selectNR"><a ng-click="select(3)">NR</a></li>
         </ul>
       </div>
-      <div class="row" id="round-flow-content" ng-repeat="acArg in ac">
+      <div id="round-flow-content-container">
+      <div class="row" id="round-flow-content" ng-keydown="processKeyGeneric($event)" ng-repeat="acArg in ac">
         <div class="col-md-12">
             <div class="row" id="ac{{$index}}">
               <div class="col-md-3" id="ac{{$index}}text" ng-switch on="selection">
-                <p ng-switch-default data-ng-click="changeFocus($parent)">{{acArg.ac}}</p>
+                <p plf-p-click ng-switch-default>
+                  <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
+                  {{acArg.ac}}
+                </p>
                 <form ng-switch-when="ac" class="form-inline">
                   <div class="form-group">
-                    <textarea rows="1" class="form-control msd-elastic" ng-model=acArg.ac></textarea>
+                    <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
+                    <textarea plf-ta-ac-click rows="1" class="form-control msd-elastic" ng-model=acArg.ac></textarea>
                   </div>
                 </form>
               </div>
               <div class="col-md-9" id="ac{{$index}}responses">
                   <div class="row" ng-repeat="ncArg in acArg.nc" id="ac{{$parent.$index}}nc{{$index}}">
                     <div class="col-md-4" ng-switch on="selection">
-                      <p ng-switch-default >{{ncArg.nc}}</p>
+                      <p plf-p-click ng-switch-default>
+                        <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
+                        {{ncArg.nc}}
+                      </p>
                       <form ng-switch-when="nc" class="form-inline">
                         <div class="form-group">
-                          <textarea ng-keyup="processNcKeyUp($event, $parent.$parent.$index)" rows="1" class="form-control msd-elastic" ng-model=ncArg.nc></textarea>
+                          <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
+                          <textarea plf-ta-click rows="1" class="form-control msd-elastic" ng-model=ncArg.nc></textarea>
                         </div>
                       </form>
                     </div>
                     <div class="col-md-8">
                         <div class="row" ng-repeat="arArg in ncArg.ar" id="ac{{$parent.$parent.$index}}nc{{$parent.$index}}ar{{$index}}">
                           <div class="col-md-6" ng-switch on="selection">
-                            <p ng-switch-default >{{arArg.ar}}</p>
+                            <p plf-p-click ng-switch-default>
+                              <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                              {{arArg.ar}}
+                            </p>
                             <form ng-switch-when="ar" class="form-inline">
                               <div class="form-group">
-                                <textarea ng-keyup="processArKeyUp($event, $parent.$parent.$parent.$index, $parent.$parent.$index)" rows="1" class="form-control msd-elastic" ng-model=arArg.ar></textarea>
+                                <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                <textarea plf-ta-click rows="1" class="form-control msd-elastic" ng-model=arArg.ar></textarea>
                               </div>
                             </form>
                           </div>
                           <div class="col-md-6" id="responses in NR">
                             <div class="row" ng-repeat="nrArg in arArg.nr" id="ac{{$parent.$parent.$parent.$index}}nc{{$parent.$parent.$index}}ar{{$parent.$index}}nr{{$index}}">
                               <div ng-switch on="selection">
-                                <p ng-switch-default >{{nrArg.nr}}</p>
+                                <p plf-p-click ng-switch-default>
+                                  <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                  {{nrArg.nr}}
+                                </p>
                                 <form ng-switch-when="nr" class="form-inline">
                                   <div class="form-group">
-                                    <textarea rows="1" class="form-control msd-elastic" ng-model=nrArg.nr></textarea>
+                                    <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                    <textarea plf-ta-click rows="1" class="form-control msd-elastic" ng-model=nrArg.nr></textarea>
                                   </div>
                                 </form>
                               </div>
@@ -87,6 +104,17 @@
             </div>
         </div>
       </div>
+    </div>
+  </div>
+    <div id="footer" class="container-fluid">
+      <div class="container">
+      <h3>Additional Notes</h3>
+      <form class="form">
+        <div class="form-group">
+          <textarea rows="5" class="form-control msd-elastic" ng-model="extranotes"></textarea>
+        </div>
+      </form>
+    </div>
     </div>
   </body>
 </html>

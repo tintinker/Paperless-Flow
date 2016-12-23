@@ -1,11 +1,18 @@
 var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic']);
 
+app.config( [
+    '$compileProvider',
+    function( $compileProvider )
+    {
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
+        // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
+    }
+  ]);
 
 app.controller('MainCtrl', [
   '$scope',
   '$timeout',
-  '$sce',
-  function($scope, $timeout,$sce){
+  function($scope, $timeout){
     $scope.ac = [
       {
         ac:"Apples",
@@ -78,10 +85,26 @@ app.controller('MainCtrl', [
       },
     ];
 
+    $scope.dd = function(){
+      let dataStr = JSON.stringify($scope.ac);
+      let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+      let exportFileDefaultName = 'data.json';
+
+      let ll = $("#todownload");
+      ll.attr({
+        "href": dataUri,
+        "download": exportFileDefaultName
+      });
+
+    }
+
     $scope.selection = "ac";
 
-    $scope.tab = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-    $scope.fillertext ="";
+    $scope.extranotes="";
+
+    $scope.trash = false;
+
     $scope.comboIndex = 0;
     $scope.combos = [];
 
@@ -89,7 +112,6 @@ app.controller('MainCtrl', [
       var refs = [0,0,0,0];
       for(var i = 0; i < $scope.combos[$scope.comboIndex].refs.length; i++)
         refs[i] = $scope.combos[$scope.comboIndex].refs[i];
-      alert(refs[0]+" "+refs[1]+" "+refs[2]+" "+refs[3]+" ");
       switch($scope.selection) {
         case "ac":
             $scope.addAcArg("", refs[0], emphasize);
@@ -106,7 +128,25 @@ app.controller('MainCtrl', [
       $scope.refresh();
     };
 
-    $scope.increment = function(){
+    $scope.deleteArg = function(index) {
+      switch(index.length) {
+        case 1:
+          $scope.ac.splice(index[0],1);
+          break;
+        case 2:
+          $scope.ac[index[0]].nc.splice(index[1],1);
+          break;
+        case 3:
+          $scope.ac[index[0]].nc[index[1]].ar.splice(index[2],1);
+          break;
+        case 4:
+          $scope.ac[index[0]].nc[index[1]].ar[index[2]].nr.splice(index[3],1);
+        }
+      $scope.$apply();
+      $scope.refresh();
+    }
+
+    $scope.validateBefore = function(){
       var refs = 0;
       switch($scope.selection) {
         case "ac":
@@ -121,74 +161,176 @@ app.controller('MainCtrl', [
         case "nr":
           refs = 4;
       }
+      return $scope.combos[$scope.comboIndex].refs.length < refs;
+    }
+
+    $scope.updateRespondingTo = function(){
+      $("p").removeClass("responding-to");
+      $("#"+$scope.combos[$scope.comboIndex].id+">div>p").addClass("responding-to");
+    };
+
+    $scope.onArgClick = function(id){
+      var beforeIndex = $scope.comboIndex;
       do {
         $scope.comboIndex = ($scope.comboIndex + 1 < $scope.combos.length) ? ($scope.comboIndex + 1) : 0;
-      } while($scope.combos[$scope.comboIndex].refs.length >= refs);
+      } while($scope.combos[$scope.comboIndex].id != id);
+      if(!$scope.validateBefore()) {
+        $scope.comboIndex = beforeIndex;
+      } else {
+        $scope.updateRespondingTo();
+      //  alert($scope.combos[$scope.comboIndex].refs);
+      }
+    }
 
-      $("p").removeClass("responding-to");
-    //  alert($scope.combos[$scope.comboIndex]);
-      $("#"+$scope.combos[$scope.comboIndex].id+">div>p").addClass("responding-to");
+    $scope.increment = function(){
+
+      do {
+        $scope.comboIndex = ($scope.comboIndex + 1 < $scope.combos.length) ? ($scope.comboIndex + 1) : 0;
+      } while(!$scope.validateBefore());
+
+      $scope.updateRespondingTo();
+    }
+
+    $scope.decrement = function(){
+
+      do {
+        $scope.comboIndex = ($scope.comboIndex - 1 >= 0) ? ($scope.comboIndex - 1) : $scope.combos.length - 1;
+      } while(!$scope.validateBefore());
+
+      $scope.updateRespondingTo();
     }
 
     $scope.select = function(s){
       $(".nav-pills > li").removeClass("active");
       switch(s) {
+        case 0:
+          $scope.selection = "ac";
+          $("#selectAC").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                $scope.refresh();
+                $("#ac0 textarea").focus();
+                $("#ac0 textarea").click();
+          }, 10);
+          break;
         case 1:
           $scope.selection = "nc";
           $("#selectNC").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                if(!$scope.ac[0].nc || !$scope.ac[0].nc.length)
+                  $scope.addNcArg("",0);
+                $scope.refresh();
+                $("#ac0nc0 textarea").focus();
+                $("#ac0nc0 textarea").click();
+          }, 10);
           break;
         case 2:
           $scope.selection = "ar";
           $("#selectAR").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                if(!$scope.ac[0].nc || !$scope.ac[0].nc.length)
+                  $scope.addNcArg("",0);
+                if(!$scope.ac[0].nc[0].ar || !$scope.ac[0].nc[0].ar.length)
+                  $scope.addArArg("",0,0);
+                $scope.refresh();
+                $("#ac0nc0ar0 textarea").focus();
+                $("#ac0nc0ar0 textarea").click();
+          }, 10);
           break;
         case 3:
           $scope.selection = "nr";
           $("#selectNR").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                if(!$scope.ac[0].nc || !$scope.ac[0].nc.length)
+                  $scope.addNcArg("",0);
+                if(!$scope.ac[0].nc[0].ar || !$scope.ac[0].nc[0].ar.length)
+                  $scope.addArArg("",0,0);
+                if(!$scope.ac[0].nc[0].ar[0].nr || !$scope.ac[0].nc[0].ar[0].nr.length)
+                  $scope.addNrArg("",0,0,0);
+                $scope.refresh();
+                $("#ac0nc0ar0nr0 textarea").focus();
+                $("#ac0nc0ar0nr0 textarea").click();
+          }, 10);
           break;
         default:
-          $scope.selection =  "ac";
-          $("#selectAC").addClass("active");
+          $scope.selection =  "none";
+          $("#selectNONE").addClass("active");
       }
+      $scope.refresh();
     }
 
     $scope.refresh = function(){
-      $scope.updateBold();
+      $scope.combos = [];
       for(var i = 0; i < $scope.ac.length; i++) {
-        $scope.fillertext += $scope.ac[i].ac + "<br>";
         $scope.combos.push({id:("ac"+i),refs:[i]});
         if($scope.ac[i].nc) for(var j = 0; j < $scope.ac[i].nc.length; j++) {
-          $scope.fillertext += $scope.tab + $scope.ac[i].nc[j].nc + "<br>";
           $scope.combos.push({id:("ac"+i+"nc"+j),refs:[i,j]});
           if($scope.ac[i].nc[j].ar) for(var k = 0; k < $scope.ac[i].nc[j].ar.length; k++) {
-            $scope.fillertext += $scope.tab + $scope.tab + $scope.ac[i].nc[j].ar[k].ar + "<br>";
             $scope.combos.push({id:("ac"+i+"nc"+j+"ar"+k),refs:[i,j,k]});
             if($scope.ac[i].nc[j].ar[k].nr) for(var l = 0; l < $scope.ac[i].nc[j].ar[k].nr.length; l++) {
-              $scope.fillertext += $scope.tab + $scope.tab +  $scope.tab + $scope.ac[i].nc[j].ar[k].nr[l].nr + "<br>";
               $scope.combos.push({id:("ac"+i+"nc"+j+"ar"+k+"nr"+l),refs:[i,j,k,l]});
             }
           }
         }
       }
+      $scope.updateBold();
+      $scope.checkForDrops();
     };
+
+    $scope.checkForDrops = function(){
+      $("div").removeClass("dropped");
+      switch($scope.selection) {
+        case "nc":
+          for(var i = 0; i < $scope.ac.length; i++) {
+            if(!$scope.ac[i].nc || $scope.ac[i].nc == undefined) {
+              $("#ac"+i+">div").addClass("dropped");
+            }
+          }
+          break;
+        case "ar":
+          for(var i = 0; i < $scope.ac.length; i++) {
+            if($scope.ac[i].nc) for(var j = 0; j < $scope.ac[i].nc.length; j++) {
+              if(!$scope.ac[i].nc[j].ar|| $scope.ac[i].nc[j].ar == undefined) {
+                $("#ac"+i+"nc"+j+">div").addClass("dropped");
+              }
+            }
+          }
+          break;
+        case "nr":
+          for(var i = 0; i < $scope.ac.length; i++) {
+            if($scope.ac[i].nc) for(var j = 0; j < $scope.ac[i].nc.length; j++) {
+              if($scope.ac[i].nc[j].ar) {for(var k = 0; k < $scope.ac[i].nc[j].ar.length; k++) {
+                  if(!$scope.ac[i].nc[j].ar[k].nr || $scope.ac[i].nc[j].ar[k].nr == undefined) {
+                    $("#ac"+i+"nc"+j+"ar"+k+">div").addClass("dropped");
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
 
     $scope.updateBold = function(){
       for(var i = 0; i < $scope.ac.length; i++) {
         if($scope.ac[i].emphasize)
           $("#ac"+i+"text").addClass("emphasized");
-        else
-          $("#ac"+i+"text").addClass("not-emphasized");
       }
-    };
-
-    $scope.changeFocus = function(event){
-      alert(event.id);
     };
 
     $scope.addAcArg = function(tag, afterIndex, _emphasize) {
       $scope.ac.splice(afterIndex+1,0,{ac:tag, emphasize:_emphasize});
       $scope.updateBold();
       $timeout(function () {
+            $scope.refresh();
             $("#ac"+(afterIndex+1)+" textarea").focus();
+            $("#ac"+(afterIndex+1)+" textarea").click();
       }, 10);
     };
 
@@ -239,5 +381,88 @@ app.controller('MainCtrl', [
             $("#ac"+(acArgRef)+"nc"+(ncArgRef)+"ar"+(arArgRef)+"nr"+($scope.ac[acArgRef].nc[ncArgRef].ar[arArgRef].nr.length-1)+" textarea").focus();
       }, 10);
     };
+
+    $scope.processKeyGeneric = function(e) {
+      if(e.keyCode == 40)
+        $scope.increment();
+      if(e.keyCode == 38)
+        $scope.decrement();
+      else if(e.keyCode == 13) {
+        if(e.shiftKey)
+          $scope.addArgBySelection(true);
+        else
+          $scope.addArgBySelection(false);
+      }
+    }
+
+    $scope.refresh();
+    angular.element(document).ready(function () {
+      $scope.refresh();
+    });
   },
+
+
 ]);
+/*
+app.directive('plfProcessKey',function(){
+  return {
+    restrict: 'A',
+    link: function(scope, elem, attrs) {
+      $(elem).on('click',function(e){
+        var id = elem.parent().parent()
+        .parent().parent().attr('id');
+        scope.onArgClick(id);
+        scope.processKeyGeneric(e);
+      });
+    }
+  };
+});
+*/
+app.directive('plfPClick',function(){
+  return {
+    restrict: 'A',
+    link: function(scope, elem, attrs) {
+      $(elem).on('click',function(e){
+        var id = elem.parent().parent().attr('id');
+        scope.onArgClick(id);
+      });
+    }
+  };
+});
+
+app.directive('plfTaClick',function(){
+  return {
+    restrict: 'A',
+    link: function(scope, elem, attrs) {
+      $(elem).on('click',function(e){
+        var id = elem.parent().parent().parent()
+        .parent().parent().parent().attr('id');
+        scope.onArgClick(id);
+      });
+    }
+  };
+});
+
+app.directive('plfTaAcClick',function(){
+  return {
+    restrict: 'A',
+    link: function(scope, elem, attrs) {
+      $(elem).on('click',function(e){
+        var id = elem.parent().parent()
+        .parent().parent().attr('id');
+        scope.onArgClick(id);
+      });
+    }
+  };
+});
+
+app.directive('deleteArg',function(){
+  return {
+    restrict: 'A',
+    link: function(scope, elem, attrs) {
+      $(elem).on('click',function(e){
+        scope.deleteArg(JSON.parse(attrs.i));
+      });
+    }
+  };
+});
