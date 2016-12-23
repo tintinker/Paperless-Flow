@@ -10,3 +10,11 @@ p{
 .nav-pills {
   cursor: pointer;
 }
+
+.emphasized {
+  font-weight: bold;
+}
+
+.not-emphasized p, .not-emphasized .form-group{
+  padding-left: 25px;
+}

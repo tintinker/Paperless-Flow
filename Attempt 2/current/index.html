@@ -25,8 +25,9 @@
       <p ng-bind-html="fillertext"></p>
       <p ng-repeat="combo in combos track by $index">{{combo}}<br></p>
       <p>{{combos[comboIndex]}}</p>
-      <button class="btn btn-success" ng-click="loop()">Loop</button>
+      <button class="btn btn-success" ng-click="refresh()">Refresh</button>
       <button class="btn btn-primary" ng-click="increment()">Increment</button>
+      <button class="btn btn-danger" ng-click="addArgBySelection(false)">Add Argument</button>
 
       <div class="row" id="round-flow-headers">
         <ul class="row nav nav-pills nav-justified">
@@ -40,7 +41,7 @@
         <div class="col-md-12">
             <div class="row" id="ac{{$index}}">
               <div class="col-md-3" id="ac{{$index}}text" ng-switch on="selection">
-                <p ng-switch-default >{{acArg.ac}}</p>
+                <p ng-switch-default data-ng-click="changeFocus($parent)">{{acArg.ac}}</p>
                 <form ng-switch-when="ac" class="form-inline">
                   <div class="form-group">
                     <textarea rows="1" class="form-control msd-elastic" ng-model=acArg.ac></textarea>
@@ -87,69 +88,5 @@
         </div>
       </div>
     </div>
-    <div class="container-fluid">
-      <form ng-submit="addAcArg(acTag)" class="form-inline">
-        <div class="form-group">
-
-          <label for="acArgTag">New AC Argument</label>
-          <input id="acArgTag" type="text" class="form-control" ng-model="acTag" placeholder="Argument Tag Line"></input>
-
-          <button type="submit" class="btn btn-success">Submit</button>
-
-        </div>
-      </form>
-
-      <form ng-submit="addNcArg(ncTag, acArgRef)" class="form-inline">
-        <div class="form-group">
-
-          <label for="ncArgTag">New NC Argument</label>
-          <input id="ncArgTag" type="text" class="form-control" ng-model="ncTag" placeholder="Argument Tag Line"></input>
-
-          <label for="acArgRef">AC #</label>
-          <input id="acArgRef" type="number" class="form-control" ng-model="acArgRef" placeholder="#"></input>
-
-          <button type="submit" class="btn btn-success">Submit</button>
-
-        </div>
-      </form>
-
-      <form ng-submit="addArArg(arTag, acArgRef1, ncArgRef1)" class="form-inline">
-        <div class="form-group">
-
-          <label for="arArgTag">New AR Argument</label>
-          <input id="arArgTag" type="text" class="form-control" ng-model="arTag" placeholder="Argument Tag Line"></input>
-
-          <label for="acArgRef1">AC #</label>
-          <input id="acArgRef1" type="number" class="form-control" ng-model="acArgRef1" placeholder="#"></input>
-
-          <label for="ncArgRef1">NC #</label>
-          <input id="ncArgRef1" type="number" class="form-control" ng-model="ncArgRef1" placeholder="#"></input>
-
-          <button type="submit" class="btn btn-success">Submit</button>
-
-        </div>
-      </form>
-
-      <form ng-submit="addNrArg(nrTag, acArgRef2, ncArgRef2, arArgRef2)" class="form-inline">
-        <div class="form-group">
-
-          <label for="nrArgTag">New NR Argument</label>
-          <input id="nrArgTag" type="text" class="form-control" ng-model="nrTag" placeholder="Argument Tag Line"></input>
-
-          <label for="acArgRef2">AC #</label>
-          <input id="acArgRef2" type="number" class="form-control" ng-model="acArgRef2" placeholder="#"></input>
-
-          <label for="ncArgRef2">NC #</label>
-          <input id="ncArgRef2" type="number" class="form-control" ng-model="ncArgRef2" placeholder="#"></input>
-
-          <label for="arArgRef2">AR #</label>
-          <input id="arArgRef2" type="number" class="form-control" ng-model="arArgRef2" placeholder="#"></input>
-
-
-          <button type="submit" class="btn btn-success">Submit</button>
-
-        </div>
-      </form>
-
   </body>
 </html>
