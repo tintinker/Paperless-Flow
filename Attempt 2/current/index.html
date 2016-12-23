@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Swift Flow</title>
+    <meta name="viewport"  content="width=device-width, initial-scale=1">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/node_modules/angular-elastic/elastic.js"></script>
+    <script src="js/angular-sanitize.js"></script>
+
+    <script src="js/app.js"></script>
+
+  </head>
+  <body ng-app="swift-flow" ng-controller="MainCtrl">
+    <div class="container-fluid">
+      <div class="page-header">
+        <h1>Swift Flow</h1>
+        <p>Tool for flowing during LD Rounds</p>
+      </div>
+      <p ng-bind-html="fillertext"></p>
+      <p ng-repeat="combo in combos track by $index">{{combo}}<br></p>
+      <p>{{combos[comboIndex]}}</p>
+      <button class="btn btn-success" ng-click="loop()">Loop</button>
+      <button class="btn btn-primary" ng-click="increment()">Increment</button>
+
+      <div class="row" id="round-flow-headers">
+        <ul class="row nav nav-pills nav-justified">
+          <li class="col-md-3 active" id="selectAC"><a ng-click="select(0)">AC</a></li>
+          <li class="col-md-3" id="selectNC"><a ng-click="select(1)">NC</a></li>
+          <li class="col-md-3" id="selectAR"><a ng-click="select(2)">AR</a></li>
+          <li class="col-md-3" id="selectNR"><a ng-click="select(3)">NR</a></li>
+        </ul>
+      </div>
+      <div class="row" id="round-flow-content" ng-repeat="acArg in ac">
+        <div class="col-md-12">
+            <div class="row" id="ac{{$index}}">
+              <div class="col-md-3" id="ac{{$index}}text" ng-switch on="selection">
+                <p ng-switch-default >{{acArg.ac}}</p>
+                <form ng-switch-when="ac" class="form-inline">
+                  <div class="form-group">
+                    <textarea rows="1" class="form-control msd-elastic" ng-model=acArg.ac></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-9" id="ac{{$index}}responses">
+                  <div class="row" ng-repeat="ncArg in acArg.nc" id="ac{{$parent.$index}}nc{{$index}}">
+                    <div class="col-md-4" ng-switch on="selection">
+                      <p ng-switch-default >{{ncArg.nc}}</p>
+                      <form ng-switch-when="nc" class="form-inline">
+                        <div class="form-group">
+                          <textarea ng-keyup="processNcKeyUp($event, $parent.$parent.$index)" rows="1" class="form-control msd-elastic" ng-model=ncArg.nc></textarea>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row" ng-repeat="arArg in ncArg.ar" id="ac{{$parent.$parent.$index}}nc{{$parent.$index}}ar{{$index}}">
+                          <div class="col-md-6" ng-switch on="selection">
+                            <p ng-switch-default >{{arArg.ar}}</p>
+                            <form ng-switch-when="ar" class="form-inline">
+                              <div class="form-group">
+                                <textarea ng-keyup="processArKeyUp($event, $parent.$parent.$parent.$index, $parent.$parent.$index)" rows="1" class="form-control msd-elastic" ng-model=arArg.ar></textarea>
+                              </div>
+                            </form>
+                          </div>
+                          <div class="col-md-6" id="responses in NR">
+                            <div class="row" ng-repeat="nrArg in arArg.nr" id="ac{{$parent.$parent.$parent.$index}}nc{{$parent.$parent.$index}}ar{{$parent.$index}}nr{{$index}}">
+                              <div ng-switch on="selection">
+                                <p ng-switch-default >{{nrArg.nr}}</p>
+                                <form ng-switch-when="nr" class="form-inline">
+                                  <div class="form-group">
+                                    <textarea rows="1" class="form-control msd-elastic" ng-model=nrArg.nr></textarea>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <form ng-submit="addAcArg(acTag)" class="form-inline">
+        <div class="form-group">
+
+          <label for="acArgTag">New AC Argument</label>
+          <input id="acArgTag" type="text" class="form-control" ng-model="acTag" placeholder="Argument Tag Line"></input>
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
+      <form ng-submit="addNcArg(ncTag, acArgRef)" class="form-inline">
+        <div class="form-group">
+
+          <label for="ncArgTag">New NC Argument</label>
+          <input id="ncArgTag" type="text" class="form-control" ng-model="ncTag" placeholder="Argument Tag Line"></input>
+
+          <label for="acArgRef">AC #</label>
+          <input id="acArgRef" type="number" class="form-control" ng-model="acArgRef" placeholder="#"></input>
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
+      <form ng-submit="addArArg(arTag, acArgRef1, ncArgRef1)" class="form-inline">
+        <div class="form-group">
+
+          <label for="arArgTag">New AR Argument</label>
+          <input id="arArgTag" type="text" class="form-control" ng-model="arTag" placeholder="Argument Tag Line"></input>
+
+          <label for="acArgRef1">AC #</label>
+          <input id="acArgRef1" type="number" class="form-control" ng-model="acArgRef1" placeholder="#"></input>
+
+          <label for="ncArgRef1">NC #</label>
+          <input id="ncArgRef1" type="number" class="form-control" ng-model="ncArgRef1" placeholder="#"></input>
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
+      <form ng-submit="addNrArg(nrTag, acArgRef2, ncArgRef2, arArgRef2)" class="form-inline">
+        <div class="form-group">
+
+          <label for="nrArgTag">New NR Argument</label>
+          <input id="nrArgTag" type="text" class="form-control" ng-model="nrTag" placeholder="Argument Tag Line"></input>
+
+          <label for="acArgRef2">AC #</label>
+          <input id="acArgRef2" type="number" class="form-control" ng-model="acArgRef2" placeholder="#"></input>
+
+          <label for="ncArgRef2">NC #</label>
+          <input id="ncArgRef2" type="number" class="form-control" ng-model="ncArgRef2" placeholder="#"></input>
+
+          <label for="arArgRef2">AR #</label>
+          <input id="arArgRef2" type="number" class="form-control" ng-model="arArgRef2" placeholder="#"></input>
+
+
+          <button type="submit" class="btn btn-success">Submit</button>
+
+        </div>
+      </form>
+
+  </body>
+</html>

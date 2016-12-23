@@ -1,0 +1,12 @@
+p{
+  overflow-wrap:break-word;
+}
+
+.responding-to {
+  outline-style: solid;
+  outline-color: blue;
+}
+
+.nav-pills {
+  cursor: pointer;
+}

@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>Test</title>
+    <meta name="viewport"  content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-sanitize.js"></script>
+    <script src="js/app.js"></script>
+  </head>
+  <body ng-app="swift-flow" ng-controller="MainCtrl">
+    <div class="container">
+      <div class="page-header">
+        <h1>Test</h1>
+      </div>
+      <p ng-bind-html="fillertext"></p>
+      <p ng-repeat="combo in combos track by $index">{{combo}}<br></p>
+      <button class="btn btn-success" ng-click="loop()">Loop</button>
+    </div>
+  </body>
+</html>
