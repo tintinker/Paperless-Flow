@@ -7,9 +7,19 @@ p{
   outline-color: blue  !important
 }
 
+
 .dropped p{
   outline-style: solid;
   outline-color: red;
+}
+
+div#name-header {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+form#uploadForm {
+  display: inline-block;
 }
 
 li.active > button {
@@ -36,6 +46,23 @@ a#todownload {
 
 .emphasized {
   font-weight: bold;
+}
+
+div#additional-notes {
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+}
+
+div.speech-card {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #eeeeee;
+}
+
+div.emphasized p, div.emphasized textarea{
   font-size: 18px;
 }
 

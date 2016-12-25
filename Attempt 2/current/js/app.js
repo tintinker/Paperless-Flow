@@ -1,4 +1,4 @@
-var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic']);
+var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic', 'timer']);
 
 app.config( [
     '$compileProvider',
@@ -12,84 +12,63 @@ app.config( [
 app.controller('MainCtrl', [
   '$scope',
   '$timeout',
-  function($scope, $timeout){
-    $scope.ac = [
-      {
-        ac:"Apples",
-        emphasize:true,
-        nc:[
-          {
-            nc:"Apples are bad",
-            ar:[
-              {
-                ar:"Apples are good",
-                nr:[
-                  {
-                    nr:"Apples are not good",
-                    ar:[
-                      "Apples are really good"
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            nc:"Apples are bad again",
-            ar:[
-              {
-                ar:"Apples are good again",
-                nr:[
-                  {
-                    nr:"Apples are not good again",
-                    ar:[
-                      "Apples are really good again"
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        ac:"Oranges",
-        emphasize:true,
-        nc:[
-          {
-            nc:"Oranges are bad",
-            ar:[
-              {
-                ar:"Oranges are good",
-                nr:[
-                  {
-                    nr:"Oranges are not good",
-                    ar:[
-                      "Oranges are really good"
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        ac:"Bananas",
-        emphasize:false,
-        nc:[
-          {
-            nc:"Bananas are bad",
-          }
-        ]
-      },
-    ];
+  '$http',
+  function($scope, $timeout,$http){
 
-    $scope.dd = function(){
-      let dataStr = JSON.stringify($scope.ac);
+    $scope.ac = [{ac:"",emphasize:true}];
+    $scope.selection = "ac";
+
+    $scope.extranotes="";
+
+    $scope.flowName = "Base Flow";
+
+    $scope.trash = false;
+
+    $scope.comboIndex = 0;
+    $scope.combos = [];
+
+    $scope.baseAffirmativeConstructive = "{\"name\":\"Base Affirmative Constructive\",\"extranotes\":\"No Extra Notes\",\"flow\":[{\"ac\":\"Value\",\"emphasize\":true,\"$$hashKey\":\"object:4\",\"nc\":[]},{\"ac\":\"\",\"emphasize\":false,\"$$hashKey\":\"object:12\"},{\"ac\":\"Value Criterion\",\"emphasize\":true,\"$$hashKey\":\"object:17\"},{\"ac\":\"\",\"emphasize\":false,\"$$hashKey\":\"object:23\"},{\"ac\":\"Contention 1\",\"emphasize\":true,\"$$hashKey\":\"object:28\"},{\"ac\":\"\",\"emphasize\":false,\"$$hashKey\":\"object:34\"},{\"ac\":\"Contention 2\",\"emphasize\":true,\"$$hashKey\":\"object:39\"}]}";
+
+    $scope.whichView = "flowView";
+
+    $scope.selectView = function(view){
+      $("#select-view > li").removeClass("active");
+      if(view == 0) {
+        $scope.whichView = "readView";
+        $("#read-view").addClass("active");
+      }
+      else if(view == 2) {
+
+      }
+      else {
+        $scope.whichView = "flowView";
+        $("#affFlow").addClass("active");
+      }
+      $timeout(function () {
+        $scope.refreshSelection();
+
+      }, 10);
+    }
+
+    $scope.loadFile = function(fileData){
+      let file = JSON.parse(fileData);
+      $scope.ac = file.flow;
+      $scope.flowName = file.name;
+      $scope.extranotes = file.extranotes;
+      $scope.$apply();
+      $scope.refresh();
+    }
+
+    $scope.downloadCase = function(){
+      let file = {
+        name: $scope.flowName,
+        flow: $scope.ac,
+        extranotes: $scope.extranotes
+      };
+      let dataStr = JSON.stringify(file);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
-      let exportFileDefaultName = 'data.json';
+      let exportFileDefaultName = $scope.flowName+".flow";
 
       let ll = $("#todownload");
       ll.attr({
@@ -98,15 +77,6 @@ app.controller('MainCtrl', [
       });
 
     }
-
-    $scope.selection = "ac";
-
-    $scope.extranotes="";
-
-    $scope.trash = false;
-
-    $scope.comboIndex = 0;
-    $scope.combos = [];
 
     $scope.addArgBySelection = function(emphasize){
       var refs = [0,0,0,0];
@@ -200,12 +170,73 @@ app.controller('MainCtrl', [
       $scope.updateRespondingTo();
     }
 
+    $scope.refreshSelection = function(){
+      $(".nav-pills > li").removeClass("active");
+      switch($scope.selection) {
+        case "ac":
+          $(".selectAC").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                $scope.refresh();
+                $("#ac0 textarea").focus();
+                $("#ac0 textarea").click();
+          }, 10);
+          break;
+        case "nc":
+          $(".selectNC").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                if(!$scope.ac[0].nc || !$scope.ac[0].nc.length)
+                  $scope.addNcArg("",0);
+                $scope.refresh();
+                $("#ac0nc0 textarea").focus();
+                $("#ac0nc0 textarea").click();
+          }, 10);
+          break;
+        case "ar":
+          $(".selectAR").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                if(!$scope.ac[0].nc || !$scope.ac[0].nc.length)
+                  $scope.addNcArg("",0);
+                if(!$scope.ac[0].nc[0].ar || !$scope.ac[0].nc[0].ar.length)
+                  $scope.addArArg("",0,0);
+                $scope.refresh();
+                $("#ac0nc0ar0 textarea").focus();
+                $("#ac0nc0ar0 textarea").click();
+          }, 10);
+          break;
+        case "nr":
+          $(".selectNR").addClass("active");
+          $timeout(function () {
+                if(!$scope.ac || !$scope.ac.length)
+                  $scope.addAcArg("");
+                if(!$scope.ac[0].nc || !$scope.ac[0].nc.length)
+                  $scope.addNcArg("",0);
+                if(!$scope.ac[0].nc[0].ar || !$scope.ac[0].nc[0].ar.length)
+                  $scope.addArArg("",0,0);
+                if(!$scope.ac[0].nc[0].ar[0].nr || !$scope.ac[0].nc[0].ar[0].nr.length)
+                  $scope.addNrArg("",0,0,0);
+                $scope.refresh();
+                $("#ac0nc0ar0nr0 textarea").focus();
+                $("#ac0nc0ar0nr0 textarea").click();
+          }, 10);
+          break;
+        default:
+          $("#selectNONE").addClass("active");
+      }
+      $scope.refresh();
+    }
+
     $scope.select = function(s){
       $(".nav-pills > li").removeClass("active");
       switch(s) {
         case 0:
           $scope.selection = "ac";
-          $("#selectAC").addClass("active");
+          $(".selectAC").addClass("active");
           $timeout(function () {
                 if(!$scope.ac || !$scope.ac.length)
                   $scope.addAcArg("");
@@ -216,7 +247,7 @@ app.controller('MainCtrl', [
           break;
         case 1:
           $scope.selection = "nc";
-          $("#selectNC").addClass("active");
+          $(".selectNC").addClass("active");
           $timeout(function () {
                 if(!$scope.ac || !$scope.ac.length)
                   $scope.addAcArg("");
@@ -229,7 +260,7 @@ app.controller('MainCtrl', [
           break;
         case 2:
           $scope.selection = "ar";
-          $("#selectAR").addClass("active");
+          $(".selectAR").addClass("active");
           $timeout(function () {
                 if(!$scope.ac || !$scope.ac.length)
                   $scope.addAcArg("");
@@ -244,7 +275,7 @@ app.controller('MainCtrl', [
           break;
         case 3:
           $scope.selection = "nr";
-          $("#selectNR").addClass("active");
+          $(".selectNR").addClass("active");
           $timeout(function () {
                 if(!$scope.ac || !$scope.ac.length)
                   $scope.addAcArg("");
@@ -320,7 +351,7 @@ app.controller('MainCtrl', [
     $scope.updateBold = function(){
       for(var i = 0; i < $scope.ac.length; i++) {
         if($scope.ac[i].emphasize)
-          $("#ac"+i+"text").addClass("emphasized");
+          $(".ac"+i+"text").addClass("emphasized");
       }
     };
 
@@ -395,29 +426,63 @@ app.controller('MainCtrl', [
       }
     }
 
-    $scope.refresh();
-    angular.element(document).ready(function () {
+    $scope.closeNameChangeForm = function(){
+      $("#modalNameCloseButton").click();
+    }
+
+    $scope.doLoadTemplate = function(){
+      $scope.loadFile($scope.baseAffirmativeConstructive);
       $scope.refresh();
-    });
+    };
+
+    $scope.initUpload = function() {
+      $("#caseUploadSelect").change(function(){
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          $scope.loadFile(e.target.result);
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    $scope.setup = function(){
+      $(document).ready(function(){
+        $scope.refresh();
+      });
+    };
+
+    $scope.timerpaused = true;
+    $scope.timerstopped = true;
+
+    $scope.pauseResume = function(){
+      $scope.timerpaused = !$scope.timerpaused;
+      $("#timerOptions > #pauseButton").html(($scope.timerpaused ? "Pause" : "Resume"));
+      if($scope.timerpaused) {
+        $scope.$broadcast('timer-resume');
+      } else {
+        $scope.$broadcast('timer-stop');
+      }
+    }
+
+    $scope.startStop = function(){
+      $scope.timerstopped = !$scope.timerstopped;
+      $("#timerOptions > #startButton").html(($scope.timerstopped ? "Start" : "Reset"));
+      if(!$scope.timerstopped) {
+        $scope.$broadcast('timer-start');
+      } else {
+        $scope.$broadcast('timer-reset');
+      }
+    }
+
+    $scope.setup();
   },
 
 
 ]);
-/*
-app.directive('plfProcessKey',function(){
-  return {
-    restrict: 'A',
-    link: function(scope, elem, attrs) {
-      $(elem).on('click',function(e){
-        var id = elem.parent().parent()
-        .parent().parent().attr('id');
-        scope.onArgClick(id);
-        scope.processKeyGeneric(e);
-      });
-    }
-  };
-});
-*/
+
+
+
 app.directive('plfPClick',function(){
   return {
     restrict: 'A',
@@ -466,3 +531,20 @@ app.directive('deleteArg',function(){
     }
   };
 });
+
+app.directive("fileread", [function () {
+    return {
+        scope: {
+            fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                scope.$apply(function () {
+                    scope.fileread = changeEvent.target.files[0];
+                    // or all selected files:
+                    // scope.fileread = changeEvent.target.files;
+                });
+            });
+        }
+    }
+}]);
