@@ -1,4 +1,4 @@
-var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic', 'timer']);
+var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic', 'timer', 'ui.bootstrap']);
 
 app.config( [
     '$compileProvider',
@@ -18,6 +18,11 @@ app.controller('MainCtrl', [
     $scope.ac = [{ac:"",emphasize:true}];
     $scope.selection = "ac";
 
+    $scope.blockFileName = "No Block File Loaded";
+    $scope.blocks = [];
+    $scope.blockAutofillData = [];
+
+
     $scope.extranotes="";
 
     $scope.flowName = "Blank Flow";
@@ -30,6 +35,10 @@ app.controller('MainCtrl', [
     $scope.baseAffirmativeConstructive = "{\"name\":\"Base Affirmative Constructive\",\"extranotes\":\"No Extra Notes\",\"flow\":[{\"ac\":\"Value\",\"emphasize\":true,\"$$hashKey\":\"object:4\",\"nc\":[]},{\"ac\":\"\",\"emphasize\":false,\"$$hashKey\":\"object:12\"},{\"ac\":\"Value Criterion\",\"emphasize\":true,\"$$hashKey\":\"object:17\"},{\"ac\":\"\",\"emphasize\":false,\"$$hashKey\":\"object:23\"},{\"ac\":\"Contention 1\",\"emphasize\":true,\"$$hashKey\":\"object:28\"},{\"ac\":\"\",\"emphasize\":false,\"$$hashKey\":\"object:34\"},{\"ac\":\"Contention 2\",\"emphasize\":true,\"$$hashKey\":\"object:39\"}]}";
 
     $scope.whichView = "flowView";
+
+    $scope.timerpaused = true;
+    $scope.timerstopped = true;
+
 
     $scope.selectView = function(view){
       $("#select-view > li").removeClass("active");
@@ -452,9 +461,6 @@ app.controller('MainCtrl', [
       });
     };
 
-    $scope.timerpaused = true;
-    $scope.timerstopped = true;
-
     $scope.pauseResume = function(){
       $scope.timerpaused = !$scope.timerpaused;
       $("#timerOptions > #pauseButton").html(($scope.timerpaused ? "Pause" : "Resume"));
@@ -476,11 +482,15 @@ app.controller('MainCtrl', [
     }
 
     $scope.setup();
+
+    $scope.displayResponsePopover = function(item, model, label, evt){
+      alert("selected! "+item+" "+model+" "+label+" "+evt.target);
+      console.log(evt.target);
+      console.log($(evt.target).closest("div").find("textarea").attr("color","red"));
+      $(evt.target).closest("div").html("s");
+    }
   },
-
-
 ]);
-
 
 
 app.directive('plfPClick',function(){
@@ -530,4 +540,27 @@ app.directive('deleteArg',function(){
       });
     }
   };
+});
+
+app.directive('plfBlockUpload',function(){
+  return {
+    restrict: 'A',
+    link: function(scope,element,attributes) {
+      element.change(function(){
+        let file = this.files[0];
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          let content = JSON.parse(e.target.result);
+          scope.blockFileName = content.name;
+          scope.blocks = content.blocks;
+          scope.blockAutofillData = [];
+          for (var i = 0; i < scope.blocks.length; i++) {
+            scope.blockAutofillData.push(scope.blocks[i].argument);
+          }
+          scope.$apply();
+        };
+        reader.readAsText(file);
+      });
+    }
+  }
 });

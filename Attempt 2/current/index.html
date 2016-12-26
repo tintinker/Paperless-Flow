@@ -17,6 +17,8 @@
     <script src="js/angular-timer.min.js"></script>
     <script src="js/node_modules/moment/moment.js"></script>
     <script src="js/node_modules/humanize-duration/humanize-duration.js"></script>
+    <script src="js/ui-bootstrap-tpls-2.3.1.min.js"></script>
+
 
 
     <script src="js/app.js"></script>
@@ -91,10 +93,16 @@
         <ul id="options-pane" class="row nav nav-pills">
           <li id="selectNONE"><button ng-click="select(-1)" class="btn btn-secondary"><a><span class="text-left glyphicon glyphicon-menu-hamburger"></span> Overview</a></button></li>
           <button class="btn btn-danger" ng-click="trash = !trash"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-            <label class="btn btn-info" for="caseUploadSelect"><span class="glyphicon glyphicon-open"></span> Open Flow</label>
-              <input style="display:none" type="file" id="caseUploadSelect" accept=".flow" ng-init="initUpload()" />
-              <a ng-click="downloadCase()" id="todownload"><button class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Save Flow</button></a>
-        </ul>
+          <label class="btn btn-info" for="caseUploadSelect"><span class="glyphicon glyphicon-open"></span> Open Flow</label>
+            <input style="display:none" type="file" id="caseUploadSelect" accept=".flow" ng-init="initUpload()" />
+          <a ng-click="downloadCase()" id="todownload"><button class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Save Flow</button></a>
+          <span>
+              <a href="blocks manager.html" target = "_blank"><button class="btn btn-warning" data-toggle="collapse" data-target="#add-block">Manage Block Files</button></a>
+              <label class="btn btn-warning" for="blockUploadSelect"><span class="glyphicon glyphicon-open"></span></label>
+                <input plf-block-upload style="display:none" type="file" id="blockUploadSelect" accept=".bloc" />
+              Block File: {{blockFileName}}
+          </span>
+          </ul>
         <div class="row" id="round-flow-headers">
           <ul class="row nav nav-pills nav-justified">
             <li class="col-md-3 active selectAC"><a ng-click="select(0)">AC</a></li>
@@ -104,72 +112,80 @@
           </ul>
         </div>
         <div id="round-flow-content-container">
-          <div class="row" id="round-flow-content" ng-keydown="processKeyGeneric($event)" ng-repeat="acArg in ac">
-            <div class="col-md-12">
-              <div class="row" id="ac{{$index}}">
-                <div class="col-md-3 ac{{$index}}text" ng-switch on="selection">
-                  <p plf-p-click ng-switch-default>
-                    <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
-                    {{acArg.ac}}
-                  </p>
-                  <form ng-switch-when="ac" class="form-inline">
-                    <div class="form-group">
-                      <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
-                      <textarea plf-ta-ac-click rows="1" class="form-control msd-elastic" ng-model=acArg.ac></textarea>
-                    </div>
-                  </form>
-                </div>
-                <div class="col-md-9" id="ac{{$index}}responses">
-                  <div class="row" ng-repeat="ncArg in acArg.nc" id="ac{{$parent.$index}}nc{{$index}}">
-                    <div class="col-md-4" ng-switch on="selection">
-                      <p plf-p-click ng-switch-default>
-                        <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
-                        {{ncArg.nc}}
-                      </p>
-                      <form ng-switch-when="nc" class="form-inline">
-                        <div class="form-group">
-                          <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
-                          <textarea plf-ta-click rows="1" class="form-control msd-elastic" ng-model=ncArg.nc></textarea>
+          <table class="table table-striped">
+            <tbody>
+              <tr ng-repeat="acArg in ac">
+                <td>
+                  <div class="row" id="round-flow-content" ng-keydown="processKeyGeneric($event)">
+                    <div class="col-md-12">
+                      <div class="row" id="ac{{$index}}">
+                        <div class="col-md-3 ac{{$index}}text" ng-switch on="selection">
+                          <p plf-p-click ng-switch-default>
+                            <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
+                            {{acArg.ac}}
+                          </p>
+                          <form ng-switch-when="ac" class="form-inline">
+                            <div class="form-group">
+                              <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
+                              <textarea uib-typeahead="block for block in blockAutofillData | filter:$viewValue | limitTo:5" typeahead-on-select="displayResponsePopover($item, $model, $label, $event)" plf-ta-ac-click rows="1" class="form-control msd-elastic typeahead" ng-model=acArg.ac></textarea>
+                            </div>
+                          </form>
                         </div>
-                      </form>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="row" ng-repeat="arArg in ncArg.ar" id="ac{{$parent.$parent.$index}}nc{{$parent.$index}}ar{{$index}}">
-                          <div class="col-md-6" ng-switch on="selection">
-                            <p plf-p-click ng-switch-default>
-                              <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
-                              {{arArg.ar}}
-                            </p>
-                            <form ng-switch-when="ar" class="form-inline">
-                              <div class="form-group">
-                                <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
-                                <textarea plf-ta-click rows="1" class="form-control msd-elastic" ng-model=arArg.ar></textarea>
-                              </div>
-                            </form>
-                          </div>
-                          <div class="col-md-6" id="responses in NR">
-                            <div class="row" ng-repeat="nrArg in arArg.nr" id="ac{{$parent.$parent.$parent.$index}}nc{{$parent.$parent.$index}}ar{{$parent.$index}}nr{{$index}}">
-                              <div ng-switch on="selection">
-                                <p plf-p-click ng-switch-default>
-                                  <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
-                                  {{nrArg.nr}}
-                                </p>
-                                <form ng-switch-when="nr" class="form-inline">
-                                  <div class="form-group">
-                                    <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
-                                    <textarea plf-ta-click rows="1" class="form-control msd-elastic" ng-model=nrArg.nr></textarea>
+                        <div class="col-md-9" id="ac{{$index}}responses">
+                          <div class="row" ng-repeat="ncArg in acArg.nc" id="ac{{$parent.$index}}nc{{$index}}">
+                            <div class="col-md-4" ng-switch on="selection">
+                              <p plf-p-click ng-switch-default>
+                                <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
+                                {{ncArg.nc}}
+                              </p>
+                              <form ng-switch-when="nc" class="form-inline">
+                                <div class="form-group">
+                                  <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
+                                  <textarea uib-typeahead="block for block in blockAutofillData | filter:$viewValue | limitTo:5" plf-ta-click rows="1" class="form-control msd-elastic typeahead" ng-model=ncArg.nc></textarea>
+                                </div>
+                              </form>
+                            </div>
+                            <div class="col-md-8">
+                              <div class="row" ng-repeat="arArg in ncArg.ar" id="ac{{$parent.$parent.$index}}nc{{$parent.$index}}ar{{$index}}">
+                                <div class="col-md-6" ng-switch on="selection">
+                                  <p plf-p-click ng-switch-default>
+                                    <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                    {{arArg.ar}}
+                                  </p>
+                                  <form ng-switch-when="ar" class="form-inline">
+                                    <div class="form-group">
+                                      <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                      <textarea uib-typeahead="block for block in blockAutofillData | filter:$viewValue | limitTo:5" plf-ta-click rows="1" class="form-control msd-elastic typeahead" ng-model=arArg.ar></textarea>
+                                    </div>
+                                  </form>
+                                </div>
+                                <div class="col-md-6" id="responses in NR">
+                                  <div class="row" ng-repeat="nrArg in arArg.nr" id="ac{{$parent.$parent.$parent.$index}}nc{{$parent.$parent.$index}}ar{{$parent.$index}}nr{{$index}}">
+                                    <div ng-switch on="selection">
+                                      <p plf-p-click ng-switch-default>
+                                        <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                        {{nrArg.nr}}
+                                      </p>
+                                      <form ng-switch-when="nr" class="form-inline">
+                                        <div class="form-group">
+                                          <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                          <textarea uib-typeahead="block for block in blockAutofillData | filter:$viewValue | limitTo:5" plf-ta-click rows="1" class="form-control msd-elastic typeahead" ng-model=nrArg.nr></textarea>
+                                        </div>
+                                      </form>
+                                    </div>
                                   </div>
-                                </form>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="container">
           <h3>Additional Notes</h3>
