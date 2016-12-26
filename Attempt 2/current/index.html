@@ -89,11 +89,11 @@
       </ul>
       <div id="flowView" ng-switch-default class="container-fluid">
         <ul id="options-pane" class="row nav nav-pills">
-          <li id="selectNONE"><button ng-click="select(-1)" class="btn btn-secondary"><a><span class="text-left glyphicon glyphicon-menu-hamburger"></span></a></button></li>
-          <button class="btn btn-danger" ng-click="trash = !trash"><span class="glyphicon glyphicon-trash"</span></button>
-            <label class="btn btn-info" for="caseUploadSelect"><span class="glyphicon glyphicon-open"</span></label>
-              <input style="display:none" type="file" id="caseUploadSelect" ng-init="initUpload()" />
-              <a ng-click="downloadCase()" id="todownload"><button class="btn btn-success"><span class="glyphicon glyphicon-save"></span></button></a>
+          <li id="selectNONE"><button ng-click="select(-1)" class="btn btn-secondary"><a><span class="text-left glyphicon glyphicon-menu-hamburger"></span> Overview</a></button></li>
+          <button class="btn btn-danger" ng-click="trash = !trash"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+            <label class="btn btn-info" for="caseUploadSelect"><span class="glyphicon glyphicon-open"></span> Open Flow</label>
+              <input style="display:none" type="file" id="caseUploadSelect" accept=".flow" ng-init="initUpload()" />
+              <a ng-click="downloadCase()" id="todownload"><button class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Save Flow</button></a>
         </ul>
         <div class="row" id="round-flow-headers">
           <ul class="row nav nav-pills nav-justified">

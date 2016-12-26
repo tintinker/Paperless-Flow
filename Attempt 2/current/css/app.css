@@ -13,6 +13,17 @@ p{
   outline-color: red;
 }
 
+ul#options-pane {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+ul#options-pane > *{
+  margin-left: 2.5px;
+  margin-right: 2.5px;
+}
+
+
 div#name-header {
   padding-top: 30px;
   padding-bottom: 30px;
