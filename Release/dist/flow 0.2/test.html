@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title>Test</title>
+    <meta name="viewport"  content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-sanitize.js"></script>
+    <script src="js/ui-bootstrap-tpls-2.3.1.min.js"></script>
+
+    <script>
+    var app = angular.module('test-app',['ui.bootstrap']);
+
+    app.controller('MainCtrl', [
+      '$scope',
+      '$timeout',
+      '$http',
+      function($scope, $timeout,$http){
+        $scope.shouldOpen = false;
+      }
+
+    ]);
+
+
+    </script>
+
+  </head>
+  <body ng-app="test-app" ng-controller="MainCtrl">
+    <div class="container">
+      <div class="page-header">
+        <h1>Test</h1>
+      </div>
+    </div>
+    <div class="container">
+      <textarea uib-popover="A popover" popover-title="A title" popover-placement="right-top" popover-trigger="'none'" popover-is-open="{{shouldOpen}}" class="identifier" type="text" placeholder="Something"></textarea>
+      <textarea class="identifier" type="text" placeholder="Something"></textarea>
+      <textarea class="identifier" type="text" placeholder="Something"></textarea>
+    </div>
+
+  </body>
+</html>
