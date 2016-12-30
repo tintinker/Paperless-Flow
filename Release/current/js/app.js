@@ -330,7 +330,7 @@ app.controller('MainCtrl', [
       switch($scope.selection) {
         case "nc":
           for(var i = 0; i < $scope.ac.length; i++) {
-            if(!$scope.ac[i].nc || $scope.ac[i].nc == undefined) {
+            if((!$scope.ac[i].nc || $scope.ac[i].nc == undefined || $scope.ac[i].nc.length < 1) && $scope.ac[i].ac.length > 0) {
               $("#ac"+i+">div").addClass("dropped");
             }
           }
@@ -338,7 +338,7 @@ app.controller('MainCtrl', [
         case "ar":
           for(var i = 0; i < $scope.ac.length; i++) {
             if($scope.ac[i].nc) for(var j = 0; j < $scope.ac[i].nc.length; j++) {
-              if(!$scope.ac[i].nc[j].ar|| $scope.ac[i].nc[j].ar == undefined) {
+              if((!$scope.ac[i].nc[j].ar|| $scope.ac[i].nc[j].ar == undefined || $scope.ac[i].nc[j].ar.length < 1) && $scope.ac[i].nc[j].nc.length > 0) {
                 $("#ac"+i+"nc"+j+">div").addClass("dropped");
               }
             }
@@ -348,7 +348,7 @@ app.controller('MainCtrl', [
           for(var i = 0; i < $scope.ac.length; i++) {
             if($scope.ac[i].nc) for(var j = 0; j < $scope.ac[i].nc.length; j++) {
               if($scope.ac[i].nc[j].ar) {for(var k = 0; k < $scope.ac[i].nc[j].ar.length; k++) {
-                  if(!$scope.ac[i].nc[j].ar[k].nr || $scope.ac[i].nc[j].ar[k].nr == undefined) {
+                  if((!$scope.ac[i].nc[j].ar[k].nr || $scope.ac[i].nc[j].ar[k].nr == undefined || $scope.ac[i].nc[j].ar[k].nr.length < 1) && $scope.ac[i].nc[j].ar[k].ar.length > 0) {
                     $("#ac"+i+"nc"+j+"ar"+k+">div").addClass("dropped");
                   }
                 }
