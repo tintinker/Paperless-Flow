@@ -3,7 +3,6 @@ p{
 }
 
 div.pop-head, div.pop-head > p, div.pop-head > *{
-  white-space: nowrap;
   display: inline;
 }
 
