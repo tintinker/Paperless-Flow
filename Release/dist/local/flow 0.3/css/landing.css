@@ -1,0 +1,19 @@
+.section-image > img {
+  display: block;
+  max-width: 50%;
+  height: auto;
+  padding: 20px;
+  margin: 0 auto;
+}
+#intro {
+  color: white;
+  background-color: green;
+}
+#content {
+  background-color: #eeeeee;
+}
+#checkout {
+  background-color: #dddddd;
+  opacity: 1;
+  color: black;
+}

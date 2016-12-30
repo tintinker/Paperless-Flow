@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blocks Manager</title>
+    <meta name="viewport"  content="width=device-width, initial-scale=1">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/blocks-app.css" rel="stylesheet">
+
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/node_modules/angular-elastic/elastic.js"></script>
+    <script src="js/angular-sanitize.js"></script>
+    <script src="js/ng-file-upload-shim.min.js"></script>
+    <script src="js/ng-file-upload.min.js"></script>
+    <script src="js/ui-bootstrap-tpls-2.3.1.min.js"></script>
+
+
+    <script src="js/blocks-app.js"></script>
+
+    <script> function confirmation() {return "Click Save to Download your Block File"}</script>
+
+  </head>
+  <body ng-app="blocks-manager" ng-controller="MainCtrl" onbeforeunload="return confirmation()">
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Blocks Manager</h1>
+        <p>Add and edit blocks</p>
+      </div>
+      <div id="changeNameModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button id="modalNameCloseButton" type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Change Name</h4>
+            </div>
+            <div class="modal-body">
+              <form class="form" ng-submit="closeNameChangeForm()">
+                <div class="form-group">
+                  <label for="changeName">Name</label>
+                  <input id="changeName" class="form-control" type="text" ng-model="name">
+                </div>
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div class="text-right" id="options">
+        <span id="name-header">
+          <span class="h3">{{name}}&nbsp;</span>
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#changeNameModal"><span class="glyphicon glyphicon-pencil"></span></button>
+        </span>
+        <label class="btn btn-default" for="upload"><span class="glyphicon glyphicon-open"></span> Load Block File</label>
+          <input plf-upload style="display:none" type="file" accept=".bloc" id="upload" />
+        <a plf-download><button class="btn btn-primary"><span class="glyphicon glyphicon-save"></span> Save Block File</button></a>
+      </div>
+      <div id="add-block-section">
+        <button class="btn btn-warning" data-toggle="collapse" data-target="#add-block">Add Block</button>
+        <button class="btn btn-danger" ng-click="trash = !trash">Delete Block</button>
+        <div id="add-block" class="collapse">
+          <h2>Add Block</h2>
+          <form class="form-inline text-center" ng-submit="addBlock()">
+            <div class="form-group">
+              <label for="argument">Argument: </label>
+              <input id="argument" class="form-control" type="text" ng-model="argument" placeholder="Argument">
+            </div>
+            <div class="form-group">
+              <label for="response">Response: </label>
+              <input id="response" class="form-control" type="text" ng-model="response" placeholder="Response">
+            </div>
+            <div class="form-group">
+              <button class="btn btn-success" type="submit">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>
+            <label for="filter">Filter Blocks:&nbsp;</label>
+            <input id="filter" ng-model="filter" type="text">
+            <th>
+          </tr>
+          <tr>
+            <th ng-show="trash">
+              <span class="glyphicon glyphicon-trash"></span>
+            </th>
+            <th>Argument</th>
+            <th>Response</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="block in blocks" ng-show="passFilter($index)">
+            <td ng-show="trash">
+              <span class="glyphicon glyphicon-trash" delete-arg i="{{$index}}"></span>
+            </td>
+              <td>{{block.argument}}</td>
+              <td>{{block.response}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

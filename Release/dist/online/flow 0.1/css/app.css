@@ -1,0 +1,102 @@
+p{
+  overflow-wrap:break-word;
+}
+
+div.pop-head, div.pop-head > p, div.pop-head > *{
+  white-space: nowrap;
+  display: inline;
+}
+
+
+p.in-popover {
+  overflow-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.responding-to {
+  outline-style: solid;
+  outline-color: blue  !important
+}
+
+
+
+
+.dropped p{
+  outline-style: solid;
+  outline-color: red;
+}
+
+ul#options-pane {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+ul#options-pane > *{
+  margin-left: 2.5px;
+  margin-right: 2.5px;
+}
+
+
+div#name-header {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+form#uploadForm {
+  display: inline-block;
+}
+
+li.active > button {
+  color: #ffffff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+
+li.active > button > a > span {
+  color: #ffffff;
+}
+
+a#todownload {
+  color: #ffffff;
+}
+
+.nav-pills, .glyphicon-trash {
+  cursor: pointer;
+}
+
+.form {
+  margin-top: 10px;
+}
+
+.emphasized {
+  font-weight: bold;
+}
+
+div#additional-notes {
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+}
+
+div.speech-card {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #eeeeee;
+}
+
+div.emphasized p, div.emphasized textarea{
+  font-size: 18px;
+}
+
+div#header {
+  background-color: #eeeeee;
+
+}
+
+div#round-flow-content-container {
+  display:block;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
