@@ -2,11 +2,6 @@ p{
   overflow-wrap:break-word;
 }
 
-div.pop-head, div.pop-head > p, div.pop-head > *{
-  white-space: nowrap;
-  display: inline;
-}
-
 
 p.in-popover {
   overflow-wrap: nowrap;
