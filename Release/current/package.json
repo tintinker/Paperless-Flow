@@ -1,0 +1,29 @@
+{
+  "name": "paperless-flow",
+  "version": "0.4.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "angular-elastic": "^2.5.1",
+    "electron": "^1.4.13",
+    "humanize-duration": "^3.10.0",
+    "jquery": "^3.1.1",
+    "jquery.ns-autogrow": "^1.1.6",
+    "keypress": "^0.2.1",
+    "moment": "^2.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tintinker/Paperless-Flow.git"
+  },
+  "author": "Justin Tinker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tintinker/Paperless-Flow/issues"
+  },
+  "homepage": "https://github.com/tintinker/Paperless-Flow#readme"
+}
