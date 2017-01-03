@@ -1,4 +1,4 @@
-var app = angular.module('blocks-manager',['ui.bootstrap']);
+var app = angular.module('blocks-manager',['ui.bootstrap', 'jt-time-to-read']);
 
 app.controller('MainCtrl', [
   '$scope',

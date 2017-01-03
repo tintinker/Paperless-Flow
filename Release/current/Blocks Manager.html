@@ -15,6 +15,7 @@
     <script src="js/ng-file-upload-shim.min.js"></script>
     <script src="js/ng-file-upload.min.js"></script>
     <script src="js/ui-bootstrap-tpls-2.3.1.min.js"></script>
+    <script src="js/jt-read-text.js"></script>
 
 
     <script src="js/blocks-app.js"></script>
@@ -111,8 +112,18 @@
             <td ng-show="trash">
               <span class="glyphicon glyphicon-trash" delete-arg i="{{$index}}"></span>
             </td>
-              <td>{{block.argument}}</td>
-              <td>{{block.response}}</td>
+              <td>
+                <div class="text-right" style="opacity:0">
+                  Time to read:
+                </div>
+                {{block.argument}}
+              </td>
+              <td>
+                <div class="text-right">
+                  <time-to-read text="block.response" wpm="200"></time-to-read>
+                </div>
+                {{block.response}}
+              </td>
           </tr>
         </tbody>
       </table>

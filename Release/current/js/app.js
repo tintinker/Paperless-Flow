@@ -1,4 +1,4 @@
-var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic', 'timer', 'ui.bootstrap']);
+var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic', 'timer', 'ui.bootstrap','jt-time-to-read']);
 
 app.config( [
     '$compileProvider',
