@@ -55,7 +55,7 @@
           <span class="h3">{{flowName}}&nbsp;</span>
           <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#changeNameModal"><span class="glyphicon glyphicon-pencil"></span></button>
         </div>
-        <div ng-show="whichView == 'readView'" class="container text-right">
+        <div class="container text-right">
           <timer id="timer" class="h1" autostart="false" max-time-unit="'minute'" interval="1000">{{mminutes}} minute{{minutesS}}, {{sseconds}} second{{secondsS}}</timer>
           <div id="timerOptions">
             <button id="startButton" ng-click="startStop()" class="btn btn-default">Start</button>

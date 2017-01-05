@@ -54,15 +54,15 @@ app.directive('plfUpload',function(){
     restrict: 'A',
     link: function(scope,element,attributes) {
       element.change(function(){
-        let file = this.files[0];
-        let reader = new FileReader();
-        reader.onload = function(e) {
-          let content = JSON.parse(e.target.result);
-          scope.name = content.name;
-          scope.blocks = content.blocks;
-          scope.$apply();
-        };
-        reader.readAsText(file);
+          let file = this.files[0];
+          let reader = new FileReader();
+          reader.onload = function(e) {
+            let content = JSON.parse(e.target.result);
+            scope.name = content.name;
+            scope.blocks = scope.blocks.concat(content.blocks);
+            scope.$apply();
+          };
+          reader.readAsText(file);
       });
     }
   }
