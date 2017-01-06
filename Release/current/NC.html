@@ -18,6 +18,8 @@
     <script src="js/node_modules/moment/moment.js"></script>
     <script src="js/node_modules/humanize-duration/humanize-duration.js"></script>
     <script src="js/ui-bootstrap-tpls-2.3.1.min.js"></script>
+    <script src="js/angular-jquery.min.js"></script>
+    <script src="js/angular-bootstrap-affix.min.js"></script>
 
 
 
@@ -55,7 +57,7 @@
           <span class="h3">{{flowName}}&nbsp;</span>
           <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#changeNameModal"><span class="glyphicon glyphicon-pencil"></span></button>
         </div>
-        <div class="container text-right">
+        <div class="container text-right" bs-affix>
           <timer id="timer" class="h1" autostart="false" max-time-unit="'minute'" interval="1000">{{mminutes}} minute{{minutesS}}, {{sseconds}} second{{secondsS}}</timer>
           <div id="timerOptions">
             <button id="startButton" ng-click="startStop()" class="btn btn-default">Start</button>

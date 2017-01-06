@@ -2,6 +2,10 @@ p{
   overflow-wrap:break-word;
 }
 
+.affix {
+    position:fixed;
+    top: 0px;
+}
 
 p.in-popover {
   overflow-wrap: nowrap;

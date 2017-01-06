@@ -1,4 +1,4 @@
-var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic', 'timer', 'ui.bootstrap']);
+var app = angular.module('swift-flow', ['ngSanitize', 'monospaced.elastic', 'timer', 'ui.bootstrap','mgcrea.bootstrap.affix']);
 
 app.config( [
     '$compileProvider',
