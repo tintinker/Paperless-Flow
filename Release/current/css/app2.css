@@ -7,11 +7,9 @@ p{
     top: 0px;
 }
 
-.affix > div {
+.affix > #timeroptions {
   display: none;
 }
-
-
 
 p.in-popover {
   overflow-wrap: nowrap;

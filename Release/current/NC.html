@@ -41,7 +41,7 @@
 
 
   </head>
-  <body ng-app="swift-flow" ng-controller="MainCtrl" onbeforeunload="return confirmation()">>
+  <body ng-app="swift-flow" ng-controller="MainCtrl" onbeforeunload="return confirmation()">
     <div id="header" class="container-fluid">
       <div class="page-header">
         <h1>Paperless Flow</h1>
@@ -57,7 +57,7 @@
           <span class="h3">{{flowName}}&nbsp;</span>
           <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#changeNameModal"><span class="glyphicon glyphicon-pencil"></span></button>
         </div>
-        <div class="container text-right" bs-affix>
+        <div class="container text-right" bs-affix data-offset-bottom="200">
           <timer id="timer" class="h1" autostart="false" max-time-unit="'minute'" interval="1000">{{mminutes}} minute{{minutesS}}, {{sseconds}} second{{secondsS}}</timer>
           <div id="timerOptions">
             <button id="startButton" ng-click="startStop()" class="btn btn-default">Start</button>
