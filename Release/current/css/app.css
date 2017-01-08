@@ -2,9 +2,13 @@ p{
   overflow-wrap:break-word;
 }
 
+.floater {
+  position: fixed;
+}
+
 .affix {
+    top: 0;
     position:fixed;
-    top: 0px;
 }
 
 .affix > div {
