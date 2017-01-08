@@ -4,17 +4,12 @@ $.fn.extend({
       title: "Response From Blocks",
       content: response,
       trigger: 'manual',
-      template: '<div class="popover"  role="tooltip"><div class="popover-arrow"></div><div class="pop-head"><div class="popover-content"></div><button onclick="addBlockResponse('+indexAC+','+indexNC+','+indexAR+',\''+response+'\','+speech+')" class="btn btn-success">Add</button>&nbsp;<button class="btn" onclick="closePopup('+indexAC+','+indexNC+','+indexAR+','+speech+')">&times;</button></div></div>'
+      template: '<div class="popover" role="tooltip"><div class="pop-head"><div class="popover-arrow"></div><div class="text-right"><button class="btn" onclick="closePopup(event)">&times;</button></div></div><div class="popover-content"></div></div>'
     });
   }
 });
-function closePopup(indexAC, indexNC, indexAR, speech) {
-  if(speech == 1)
-    angular.element($(document.body)).scope().toCloseACPopovers[indexAC].popover('hide');
-  else if(speech == 2)
-    angular.element($(document.body)).scope().toCloseNCPopovers[indexNC].popover('hide');
-  else if(speech == 3)
-    angular.element($(document.body)).scope().toCloseARPopovers[indexAR].popover('hide');
+function closePopup(event) {
+  $(event.target).closest('.row').find('[data-toggle="popover"]').popover('hide');
 }
 function addBlockResponse(indexAC, indexNC, indexAR, response, speech) {
   if(speech == 1)
