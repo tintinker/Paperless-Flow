@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Paperless Flowing</title>
+    <meta name="viewport"  content="width=device-width, initial-scale=1">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/node_modules/angular-elastic/elastic.js"></script>
+    <script src="js/angular-sanitize.js"></script>
+    <script src="js/ng-file-upload-shim.min.js"></script>
+    <script src="js/ng-file-upload.min.js"></script>
+    <script src="js/angular-timer.min.js"></script>
+    <script src="js/node_modules/moment/moment.js"></script>
+    <script src="js/node_modules/humanize-duration/humanize-duration.js"></script>
+    <script src="js/ui-bootstrap-tpls-2.3.1.min.js"></script>
+    <script src="js/angular-jquery.min.js"></script>
+    <script src="js/angular-bootstrap-affix.min.js"></script>
+
+
+
+
+    <script src="js/app.js"></script>
+    <script src="js/popover-helper.js"></script>
+
+    <script> function confirmation() {return "Click Save to Download your Flow"}</script>
+
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-89570368-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+
+  </head>
+  <body ng-app="swift-flow" ng-controller="MainCtrl" onbeforeunload="return confirmation()">
+    <div id="header" class="container-fluid">
+      <div class="page-header">
+        <h1>Paperless Flow</h1>
+        <p>Tool for flowing during LD Rounds</p>
+        <p>Affirmative Constructive Side</p>
+        <a href="NC.html" target = "_blank">Create New NC Flow</a>
+      </div>
+
+    </div>
+    <div id="secondary-header">
+      <div class="row">
+        <div class="container" id="name-header">
+          <span class="h3">{{flowName}}&nbsp;</span>
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#changeNameModal"><span class="glyphicon glyphicon-pencil"></span></button>
+        </div>
+        <div class="container text-right" bs-affix data-offset-bottom="200">
+          <timer id="timer" class="h1" autostart="false" max-time-unit="'minute'" interval="1000">{{mminutes}} minute{{minutesS}}, {{sseconds}} second{{secondsS}}</timer>
+          <div id="timerOptions">
+            <button id="startButton" ng-click="startStop()" class="btn btn-default">Start</button>
+            <button id="pauseButton" ng-click="pauseResume()" class="btn btn-default">Pause</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="models">
+      <div class="modal fade" id="load-template" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                <h3>Load Template?</h3>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Start Fresh</button>
+                <button type="button" class="btn btn-primary" ng-click="doLoadTemplate()" data-dismiss="modal">Load Template</button>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div id="changeNameModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button id="modalNameCloseButton" type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Change Name</h4>
+            </div>
+            <div class="modal-body">
+              <form class="form" ng-submit="closeNameChangeForm()">
+                <div class="form-group">
+                  <label for="changeName">Name</label>
+                  <input id="changeName" class="form-control" type="text" ng-model="flowName">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="main-content" ng-switch on="whichView">
+      <ul id="select-view" class="nav nav-tabs">
+        <li id="affFlow" class="active" ng-click="selectView(1)"><a>Affirmative Flow</a></li>
+        <li id="read-view" ng-click="selectView(0)"><a>Read View</a></li>
+      </ul>
+      <div id="flowView" ng-switch-default class="container-fluid">
+        <ul id="options-pane" class="row nav nav-pills">
+          <li id="selectNONE"><button ng-click="select(-1)" class="btn btn-secondary"><a><span class="text-left glyphicon glyphicon-menu-hamburger"></span> Overview</a></button></li>
+          <button class="btn btn-danger" ng-click="trash = !trash"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+          <label class="btn btn-info" for="caseUploadSelect"><span class="glyphicon glyphicon-open"></span> Open Flow</label>
+            <input style="display:none" type="file" id="caseUploadSelect" accept=".flow" ng-init="initUpload()" />
+          <a ng-click="downloadCase()" id="todownload"><button class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Save Flow</button></a>
+          <span>
+              <a href="Blocks Manager.html" target = "_blank"><button class="btn btn-warning" data-toggle="collapse" data-target="#add-block">Manage Block Files</button></a>
+              <label class="btn btn-warning" for="blockUploadSelect"><span class="glyphicon glyphicon-open"></span></label>
+                <input plf-block-upload style="display:none" type="file" id="blockUploadSelect" accept=".bloc" />
+              Block File: {{blockFileName}}
+          </span>
+          </ul>
+        <div class="row" id="round-flow-headers">
+          <ul class="row nav nav-pills nav-justified">
+            <li class="col-md-3 active selectAC"><a ng-click="select(0)">AC</a></li>
+            <li class="col-md-3 selectNC"><a ng-click="select(1)">NC</a></li>
+            <li class="col-md-3 selectAR"><a ng-click="select(2)">AR</a></li>
+            <li class="col-md-3 selectNR"><a ng-click="select(3)">NR</a></li>
+          </ul>
+        </div>
+        <div id="round-flow-content-container">
+          <table class="table table-striped">
+            <tbody>
+              <tr ng-repeat="acArg in ac">
+                <td>
+                  <div class="row" id="round-flow-content" ng-keydown="processKeyGeneric($event)">
+                    <div class="col-md-12">
+                      <div class="row" id="ac{{$index}}">
+                        <div class="col-md-3 ac{{$index}}text argText"  ng-switch on="selection" data-toggle="popover">
+                          <p plf-p-click ng-switch-default>
+                            <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
+                            {{acArg.ac}}
+                          </p>
+                          <form ng-switch-when="ac" class="form-inline">
+                            <div class="form-group">
+                              <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$index}}]"></span>
+                              <textarea uib-typeahead="block.argument for block in blocks | filter:{argument:$viewValue} | limitTo:5" typeahead-on-select="displayResponsePopover(1, $item, $event, $index, 0, 0)"  plf-ta-ac-click rows="1" class="form-control msd-elastic typeahead" ng-model=acArg.ac></textarea>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="col-md-9" id="ac{{$index}}responses">
+                          <div class="row" ng-repeat="ncArg in acArg.nc" id="ac{{$parent.$index}}nc{{$index}}">
+                            <div class="col-md-4 argText" ng-switch on="selection" data-toggle="popover">
+                              <p plf-p-click ng-switch-default>
+                                <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
+                                {{ncArg.nc}}
+                              </p>
+                              <form ng-switch-when="nc" class="form-inline">
+                                <div class="form-group">
+                                  <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$index}},{{$index}}]"></span>
+                                  <textarea uib-typeahead="block.response for block in blocks | filter:{response:$viewValue} | limitTo:5" typeahead-on-select="displayResponsePopover(2, $item, $event, $parent.$parent.$index, $index, 0)" plf-ta-click rows="1" class="form-control msd-elastic typeahead" ng-model=ncArg.nc></textarea>
+                                </div>
+                              </form>
+                            </div>
+                            <div class="col-md-8">
+                              <div class="row" ng-repeat="arArg in ncArg.ar" id="ac{{$parent.$parent.$index}}nc{{$parent.$index}}ar{{$index}}">
+                                <div class="col-md-6 argText" ng-switch on="selection" data-toggle="popover">
+                                  <p plf-p-click ng-switch-default>
+                                    <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                    {{arArg.ar}}
+                                  </p>
+                                  <form ng-switch-when="ar" class="form-inline">
+                                    <div class="form-group">
+                                      <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                      <textarea uib-typeahead="block.argument for block in blocks | filter:{argument:$viewValue} | limitTo:5" typeahead-on-select="displayResponsePopover(3, $item, $event, $parent.$parent.$parent.$index, $parent.$parent.$index, $index)" plf-ta-click rows="1" class="form-control msd-elastic typeahead" ng-model=arArg.ar></textarea>
+                                    </div>
+                                  </form>
+                                </div>
+                                <div class="col-md-6" id="responses in NR">
+                                  <div class="row" ng-repeat="nrArg in arArg.nr" id="ac{{$parent.$parent.$parent.$index}}nc{{$parent.$parent.$index}}ar{{$parent.$index}}nr{{$index}}">
+                                    <div ng-switch on="selection">
+                                      <p plf-p-click ng-switch-default>
+                                        <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                        {{nrArg.nr}}
+                                      </p>
+                                      <form ng-switch-when="nr" class="form-inline">
+                                        <div class="form-group">
+                                          <span ng-show="trash" class="glyphicon glyphicon-trash" delete-arg i="[{{$parent.$parent.$parent.$parent.$index}},{{$parent.$parent.$parent.$index}},{{$parent.$parent.$index}},{{$index}}]"></span>
+                                          <textarea uib-typeahead="block.response for block in blocks | filter:{response:$viewValue} | limitTo:5" plf-ta-click rows="1" class="form-control msd-elastic typeahead" ng-model=nrArg.nr></textarea>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="container">
+          <h3>Additional Notes</h3>
+          <form class="form">
+            <div class="form-group">
+              <textarea rows="5" class="form-control msd-elastic" ng-model="$parent.extranotes"></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div id="readView" ng-switch-when="readView" class="container">
+        <div id="additional-notes">
+          <button class="btn btn-warning" data-toggle="collapse" data-target="#view-additional-notes">Show Additional Notes</button>
+          <div id="view-additional-notes" class="collapse speech-card">
+            <label for="additionalNotesShown">Notes:</label>
+            <p id="additionalNotesShown">{{extranotes}}</p>
+          </div>
+        </div>
+        <div class="row" id="round-flow-headers">
+          <ul class="row nav nav-pills nav-justified">
+            <li class="col-md-2 active selectAC"><a ng-click="select(0)">AC</a></li>
+            <li class="col-md-2 selectNC"><a ng-click="select(1)">NC</a></li>
+            <li class="col-md-2 selectAR"><a ng-click="select(2)">AR</a></li>
+            <li class="col-md-2 selectNR"><a ng-click="select(3)">NR</a></li>
+          </ul>
+        </div>
+        <div ng-switch on="selection">
+          <div ng-switch-when="ac">
+            <div ng-repeat="acArg in ac">
+              <div class="speech-card">
+                <h3 class="ac{{$index}}text text-center" ng-init="updateBold()">{{acArg.ac}}</h3>
+              </div>
+            </div>
+          </div>
+          <div ng-switch-when="nc">
+            <div class="text-center" ng-repeat="acArg in ac">
+              <div class="speech-card" ng-if='acArg.nc !== undefined'>
+                <h4 class="ac{{$index}}text" ng-init="updateBold()">{{acArg.ac}}</h4>
+                <div ng-repeat="ncArg in acArg.nc">
+                  <h3>{{ncArg.nc}}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-switch-when="ar">
+            <div ng-repeat="acArg in ac">
+              <div class="text-center" ng-repeat="ncArg in acArg.nc">
+                <div class="speech-card" ng-if='ncArg.ar !== undefined'>
+                  <h4>{{ncArg.nc}}</h4>
+                  <div ng-repeat="arArg in ncArg.ar">
+                    <h3>{{arArg.ar}}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-switch-when="nr">
+            <div ng-repeat="acArg in ac">
+              <div ng-repeat="ncArg in acArg.nc">
+                <div class="text-center" ng-repeat="arArg in ncArg.ar">
+                  <div class="speech-card" ng-if='arArg.nr !== undefined'>
+                    <h4>{{arArg.ar}}</h4>
+                    <div ng-repeat="nrArg in arArg.nr">
+                      <h3>{{nrArg.nr}}</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
